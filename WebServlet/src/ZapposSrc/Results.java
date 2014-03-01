@@ -8,12 +8,12 @@ import org.json.simple.parser.JSONParser;
 public class Results {	
 	private double sum;
 	private int num;
-	private JSONParser parser; Object object; JSONObject jsonobj; JSONArray responseArray;PrintWriter out;
-	private static HashMap<Integer,Double> productPricePair = new HashMap<Integer,Double>();
-	private static HashMap<Integer,String> productURLPair = new HashMap<Integer,String>();	
+	private JSONParser parser; Object object; JSONObject jsonobj; JSONArray responseArray;PrintWriter out;//JSon parsers to get the result in required format.
+	private static HashMap<Integer,Double> productPricePair = new HashMap<Integer,Double>(); // Stores product-pricepair
+	private static HashMap<Integer,String> productURLPair = new HashMap<Integer,String>();	//stores product-url pair
 	private static int COUNTER=0;
-	private static HashMap<Integer,ArrayList<String>> productURLs = new HashMap<Integer,ArrayList<String>>();
-	private static ArrayList<Double> totalPrice = new ArrayList<Double>();
+	private static HashMap<Integer,ArrayList<String>> productURLs = new HashMap<Integer,ArrayList<String>>(); //Stores the final list of products in groups
+	private static ArrayList<Double> totalPrice = new ArrayList<Double>();//the price of those product groups in total
 	public Results(int num,double sum,PrintWriter out)
 	{		
 		this.num = num;
@@ -23,6 +23,7 @@ public class Results {
 		responseArray = new JSONArray();
 		this.out=out;
 	}
+	//getters and setters for products,urls,ids
 	public HashMap<Integer,Double> getProdPricePair()
 	{
 		return productPricePair;
@@ -51,7 +52,7 @@ public class Results {
 		l=productURLPair.values();
 		return l;
 	}
-	
+	//this string reduces the entire reponse to individual tags that are needed. productID, productURL,price.
 	public void preprocess()
 	{		
 		String temp,temp2;
@@ -72,21 +73,21 @@ public class Results {
 		}catch(Exception e){e.printStackTrace();}
 		
 	}		
+	//So this function calls a recursive function to compute the nearest value and prints out the combination
 	public void print()
 	{		
 		int productcount=0;
 		try{
 		getallelements(new ArrayList<Double>(getList()),sum,"","");
-		//Collections.sort(totalPrice);
+		
 		out.println("<html><head>"
 				+ "<head><style> hr {color:sienna;} body {background-color:rgb(132,112,255);"
-				+"font-size:medium;"
-				+ "background-image:url('C:\\Users\\Kaavya Srinivasan\\workspace\\WebServlet\\src\\zappos_logo.gif');"
+				+"font-size:medium;"				
 				+"background-repeat:no-repeat;"
 				+"background-attachment:fixed;background-position:right bottom;}</style>");				
-		if(totalPrice.size()==0)
+		if(totalPrice.size()==0)//When there are no combinations possible
 			out.println("<h3>We are sorry, there are no suggested items in the price range your entered!!!</h3>");
-		else
+		else//when they are combinations possible
 		{
 			out.println("<h3>Below are the suggested products that fit your budget! Enjoy!!!!</h3></head><body>");
 			out.println("<br><br><table border=\"3\" style=\"width:300px\" align=center>");
@@ -94,7 +95,7 @@ public class Results {
 		
 			for(int i=0;i<totalPrice.size();i++)
 			{
-				if(totalPrice.get(i)>=(sum-20.00)&&totalPrice.get(i)<=(sum+20.00))
+				if(totalPrice.get(i)>=(sum-20.00)&&totalPrice.get(i)<=(sum+20.00))//I am having a window of 40$. So if 150 is entered , any amount from 130-170 would be printed
 				{
 					out.println("<tr><td>");
 					ArrayList<String> l= productURLs.get(i);
@@ -105,37 +106,9 @@ public class Results {
 					}				
 					out.println("</td><td>"+totalPrice.get(i).intValue()+"$</td></tr>");
 				}
-			}}}catch(Exception e){e.printStackTrace();}
+			}out.println("</body></html>");}}catch(Exception e){e.printStackTrace();}
 	}
-	public void test()
-	{
-		int productcount=0;
-		out.println("<html><head>"
-				+ "<head><style> hr {color:sienna;} body {background-color:rgb(132,112,255);"
-				+"font-size:medium;"
-				+ "background-image:url('C:\\Users\\Kaavya Srinivasan\\workspace\\WebServlet\\src\\zappos_logo.gif');"
-				+"background-repeat:no-repeat;"
-				+"background-attachment:fixed;background-position:right bottom;}</style>"				
-				+ "<h3>Below are the suggested products that fit your budget! Enjoy!!!!</h3></head><body>");
-		out.println("<br><br><table border=\"3\" style=\"width:300px\" align=center>");
-		out.println("<th>Product Combinations</th><th>Total Price</th>");
-		
-		for(int i=0;i<totalPrice.size();i++)
-		{
-			if(totalPrice.get(i)>=(sum-20.00)&&totalPrice.get(i)<=(sum+20.00))
-			{
-				out.println("<tr><td>");
-				ArrayList<String> l= productURLs.get(i);
-				//out.println("Size value is"+l.size());
-				for(int j=0;j<l.size();j++)
-				{
-					out.println("<a href="+l.get(j)+">Product "+productcount+++"<br>");									
-				}				
-				out.println("</td><td>"+totalPrice.get(i).intValue()+"$</td></tr>");
-			}
-		}
-		out.println("</body></html>");
-	}
+	//Recursion function to compute the combinations.
 	public void getallelements(List<Double> a,double sum,String results,String indexes)
 	{				
 		String result,index;
@@ -177,14 +150,5 @@ public class Results {
 			    }				
 			}
 		}				
-	}		
-	public void testSet()
-	{
-		ArrayList <String> l = new ArrayList<String>();		
-		l.add("http://www.zappos.com/product/8212178/color/168679");totalPrice.add(180.00);
-		l.add("http://www.zappos.com/product/8248232/color/455932");totalPrice.add(180.00);
-		l.add("http://www.zappos.com/product/8236935/color/183092");totalPrice.add(180.00);		
-		productURLs.put(0, l);
-		
-	}
+	}			
 }
