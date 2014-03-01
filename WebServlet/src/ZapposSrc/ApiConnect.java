@@ -53,7 +53,7 @@ public class ApiConnect {
 					out.println("Request cannot be processed at this moment. Please try after sometime");
 			}
 			}catch(Exception e){
-			System.out.println(e.getMessage());
+			out.println(e.getMessage());
 		}
 	}
 }
